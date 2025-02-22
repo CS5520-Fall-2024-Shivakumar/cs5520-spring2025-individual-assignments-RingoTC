@@ -85,7 +85,7 @@ public class ContactCollectorActivity extends AppCompatActivity {
             intent.setData(Uri.parse("tel:" + phoneNumber));
             startActivity(intent);
         } catch (SecurityException e) {
-            Toast.makeText(this, "Failed to make call: Permission denied", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -100,7 +100,7 @@ public class ContactCollectorActivity extends AppCompatActivity {
                     pendingCallNumber = null;
                 }
             } else {
-                Toast.makeText(this, "Permission denied to make phone calls", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -157,7 +157,6 @@ public class ContactCollectorActivity extends AppCompatActivity {
                             }
                         }
                         if (position != -1) {
-                            // 更新数据库和适配器
                             dbHelper.deleteAllContacts();
                             adapter.updateContact(newContact, position);
                             for (int i = 0; i < adapter.getItemCount(); i++) {
@@ -166,7 +165,6 @@ public class ContactCollectorActivity extends AppCompatActivity {
                             Toast.makeText(this, "Contact updated successfully", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        // 添加到数据库和适配器
                         dbHelper.addContact(newContact);
                         adapter.addContact(newContact);
                         Toast.makeText(this, "Contact added successfully", Toast.LENGTH_SHORT).show();
@@ -179,7 +177,7 @@ public class ContactCollectorActivity extends AppCompatActivity {
     private void showDeleteConfirmationDialog(Contact contact) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Contact")
-                .setMessage("Are you sure you want to delete this contact?")
+                .setMessage("Do you confirm to delete this contact?")
                 .setPositiveButton("Delete", (dialog, which) -> {
                     int position = -1;
                     for (int i = 0; i < adapter.getItemCount(); i++) {
@@ -189,7 +187,6 @@ public class ContactCollectorActivity extends AppCompatActivity {
                         }
                     }
                     if (position != -1) {
-                        // 从数据库和适配器中删除
                         dbHelper.deleteAllContacts();
                         adapter.removeContact(position);
                         for (int i = 0; i < adapter.getItemCount(); i++) {
