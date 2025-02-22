@@ -36,7 +36,22 @@ public class ContactCollectorActivity extends AppCompatActivity {
         adapter = new ContactAdapter();
         recyclerView.setAdapter(adapter);
 
-        adapter.setOnContactClickListener(this::initiateCall);
+        adapter.setOnContactClickListener(new ContactAdapter.OnContactClickListener() {
+            @Override
+            public void onContactClick(String phoneNumber) {
+                initiateCall(phoneNumber);
+            }
+
+            @Override
+            public void onEditContact(Contact contact) {
+                showEditContactDialog(contact);
+            }
+
+            @Override
+            public void onDeleteContact(Contact contact) {
+                showDeleteConfirmationDialog(contact);
+            }
+        });
 
         FloatingActionButton fab = findViewById(R.id.fab_add_contact);
         fab.setOnClickListener(v -> showAddContactDialog());
@@ -85,14 +100,30 @@ public class ContactCollectorActivity extends AppCompatActivity {
     }
 
     private void showAddContactDialog() {
+        showContactDialog(null, false);
+    }
+
+    private void showEditContactDialog(Contact contact) {
+        showContactDialog(contact, true);
+    }
+
+    private void showContactDialog(Contact existingContact, boolean isEdit) {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_contact, null);
         EditText nameEdit = dialogView.findViewById(R.id.edit_name);
         EditText phoneEdit = dialogView.findViewById(R.id.edit_phone);
 
+        if (isEdit && existingContact != null) {
+            nameEdit.setText(existingContact.getName());
+            phoneEdit.setText(existingContact.getPhone());
+        }
+
+        String title = isEdit ? "Edit Contact" : "Add Contact";
+        String positiveButton = isEdit ? "Save" : "Add";
+
         new AlertDialog.Builder(this)
-                .setTitle("Add Contact")
+                .setTitle(title)
                 .setView(dialogView)
-                .setPositiveButton("Add", (dialog, which) -> {
+                .setPositiveButton(positiveButton, (dialog, which) -> {
                     String name = nameEdit.getText().toString().trim();
                     String phone = phoneEdit.getText().toString().trim();
 
@@ -106,8 +137,44 @@ public class ContactCollectorActivity extends AppCompatActivity {
                         return;
                     }
 
-                    adapter.addContact(new Contact(name, phone));
-                    Toast.makeText(this, "Contact added successfully", Toast.LENGTH_SHORT).show();
+                    Contact newContact = new Contact(name, phone);
+                    if (isEdit) {
+                        int position = -1;
+                        for (int i = 0; i < adapter.getItemCount(); i++) {
+                            if (adapter.getContact(i).getPhone().equals(existingContact.getPhone())) {
+                                position = i;
+                                break;
+                            }
+                        }
+                        if (position != -1) {
+                            adapter.updateContact(newContact, position);
+                            Toast.makeText(this, "Contact updated successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        adapter.addContact(newContact);
+                        Toast.makeText(this, "Contact added successfully", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showDeleteConfirmationDialog(Contact contact) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Contact")
+                .setMessage("Are you sure you want to delete this contact?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    int position = -1;
+                    for (int i = 0; i < adapter.getItemCount(); i++) {
+                        if (adapter.getContact(i).getPhone().equals(contact.getPhone())) {
+                            position = i;
+                            break;
+                        }
+                    }
+                    if (position != -1) {
+                        adapter.removeContact(position);
+                        Toast.makeText(this, "Contact deleted successfully", Toast.LENGTH_SHORT).show();
+                    }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
