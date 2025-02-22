@@ -11,6 +11,15 @@ import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
     private List<Contact> contacts = new ArrayList<>();
+    private OnContactClickListener clickListener;
+
+    public interface OnContactClickListener {
+        void onContactClick(String phoneNumber);
+    }
+
+    public void setOnContactClickListener(OnContactClickListener listener) {
+        this.clickListener = listener;
+    }
 
     @NonNull
     @Override
@@ -25,6 +34,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         Contact contact = contacts.get(position);
         holder.nameTextView.setText(contact.getName());
         holder.phoneTextView.setText(contact.getPhone());
+        
+        holder.itemView.setOnClickListener(v -> {
+            if (clickListener != null) {
+                clickListener.onContactClick(contact.getPhone());
+            }
+        });
     }
 
     @Override
