@@ -25,16 +25,22 @@ public class ContactCollectorActivity extends AppCompatActivity {
     private static final int PERMISSION_CALL_PHONE = 1;
     private ContactAdapter adapter;
     private String pendingCallNumber;
+    private DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_collector);
 
+        dbHelper = new DatabaseHelper(this);
+
         RecyclerView recyclerView = findViewById(R.id.recycler_contacts);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ContactAdapter();
         recyclerView.setAdapter(adapter);
+
+        // 从数据库加载联系人
+        adapter.setContacts(dbHelper.getAllContacts());
 
         adapter.setOnContactClickListener(new ContactAdapter.OnContactClickListener() {
             @Override
@@ -147,10 +153,17 @@ public class ContactCollectorActivity extends AppCompatActivity {
                             }
                         }
                         if (position != -1) {
+                            // 更新数据库和适配器
+                            dbHelper.deleteAllContacts();
                             adapter.updateContact(newContact, position);
+                            for (int i = 0; i < adapter.getItemCount(); i++) {
+                                dbHelper.addContact(adapter.getContact(i));
+                            }
                             Toast.makeText(this, "Contact updated successfully", Toast.LENGTH_SHORT).show();
                         }
                     } else {
+                        // 添加到数据库和适配器
+                        dbHelper.addContact(newContact);
                         adapter.addContact(newContact);
                         Toast.makeText(this, "Contact added successfully", Toast.LENGTH_SHORT).show();
                     }
@@ -172,11 +185,24 @@ public class ContactCollectorActivity extends AppCompatActivity {
                         }
                     }
                     if (position != -1) {
+                        // 从数据库和适配器中删除
+                        dbHelper.deleteAllContacts();
                         adapter.removeContact(position);
+                        for (int i = 0; i < adapter.getItemCount(); i++) {
+                            dbHelper.addContact(adapter.getContact(i));
+                        }
                         Toast.makeText(this, "Contact deleted successfully", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
     }
 } 
