@@ -34,12 +34,16 @@ public class ContactCollectorActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
 
+        if (dbHelper.getAllContacts().isEmpty()) {
+            // default examples for testing
+            addDefaultContacts();
+        }
+
         RecyclerView recyclerView = findViewById(R.id.recycler_contacts);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ContactAdapter();
         recyclerView.setAdapter(adapter);
 
-        // 从数据库加载联系人
         adapter.setContacts(dbHelper.getAllContacts());
 
         adapter.setOnContactClickListener(new ContactAdapter.OnContactClickListener() {
@@ -196,6 +200,25 @@ public class ContactCollectorActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private void addDefaultContacts() {
+        Contact[] defaultContacts = {
+            new Contact("Mike", "1234567890"),
+            new Contact("Derek", "0123456789"),
+            new Contact("Eric", "1231231230"),
+            new Contact("Sarah", "9876543210"),
+            new Contact("Lisa", "4567891230"),
+            new Contact("Tom", "7891234560"),
+            new Contact("Anna", "3216549870"),
+            new Contact("John", "6549873210"),
+            new Contact("Emma", "9874563210"),
+            new Contact("David", "1597534680")
+        };
+
+        for (Contact contact : defaultContacts) {
+            dbHelper.addContact(contact);
+        }
     }
 
     @Override
