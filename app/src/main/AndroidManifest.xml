@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".QuicCalcActivity" />
+        <activity android:name=".AboutMeActivity" />
     </application>
 
 </manifest>

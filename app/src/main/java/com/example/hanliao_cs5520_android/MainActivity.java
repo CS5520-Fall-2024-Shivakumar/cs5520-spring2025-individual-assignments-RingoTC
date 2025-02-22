@@ -27,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
         aboutMeButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Toast.makeText(MainActivity.this, "name: Han Liao; liao.han1@northeastern.edu", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, AboutMeActivity.class);
+                startActivity(intent);
             }
         });
 
