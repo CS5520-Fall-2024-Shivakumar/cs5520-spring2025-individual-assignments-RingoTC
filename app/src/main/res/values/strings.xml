@@ -5,4 +5,7 @@
     <string name="defaultExpression">1+2</string>
     <string name="prime_computation">Prime Computation</string>
     <string name="contact_collector">Contact Collector</string>
+    <string name="find_primes">Find Primes</string>
+    <string name="terminate_search">Terminate Search</string>
+    <string name="pacifier_switch">Pacifier Switch</string>
 </resources>
