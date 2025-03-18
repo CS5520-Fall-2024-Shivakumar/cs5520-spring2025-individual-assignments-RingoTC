@@ -143,4 +143,21 @@ public class PrimeComputation extends AppCompatActivity {
 
         return true;
     }
+
+    @Override
+    public void onBackPressed() {
+        if (isSearching) {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Stop Searching")
+                .setMessage("Are you sure you want to stop searching for primes?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    stopPrimeSearch();
+                    super.onBackPressed();
+                })
+                .setNegativeButton("No", null)
+                .show();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
