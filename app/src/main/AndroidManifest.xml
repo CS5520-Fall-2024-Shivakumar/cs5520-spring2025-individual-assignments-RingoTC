@@ -15,7 +15,7 @@
         android:theme="@style/Theme.HanLiaoCS5520Android"
         >
         <activity
-            android:name=".PrimeComputationActivity"
+            android:name=".PrimeComputation"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         primeComputationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                Intent intent = new Intent(MainActivity.this, PrimeComputationActivity.class);
+                Intent intent = new Intent(MainActivity.this, PrimeComputation.class);
                 startActivity(intent);
             }
         });

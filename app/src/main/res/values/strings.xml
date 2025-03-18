@@ -8,4 +8,7 @@
     <string name="find_primes">Find Primes</string>
     <string name="terminate_search">Terminate Search</string>
     <string name="pacifier_switch">Pacifier Switch</string>
+    <string name="tobecomputed">--</string>
+    <string name="latest_prime">Latest Prime:</string>
+    <string name="current_number">Current Number:</string>
 </resources>
