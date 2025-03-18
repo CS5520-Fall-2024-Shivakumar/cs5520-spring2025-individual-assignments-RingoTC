@@ -3,4 +3,6 @@
     <string name="about_me">About Me</string>
     <string name="quic_calc">QUIC CALC</string>
     <string name="defaultExpression">1+2</string>
+    <string name="prime_computation">Prime Computation</string>
+    <string name="contact_collector">Contact Collector</string>
 </resources>

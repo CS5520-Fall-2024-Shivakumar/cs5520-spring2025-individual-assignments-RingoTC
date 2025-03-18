@@ -55,5 +55,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Button  primeComputationButton = findViewById(R.id.prime_computation);
+        primeComputationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(MainActivity.this, PrimeComputationActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
