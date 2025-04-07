@@ -21,10 +21,8 @@ public class PrimeComputation extends AppCompatActivity {
     private volatile boolean isSearching = false;
     private Handler mainHandler;
 
-    private int lastCurrentNumber = 3;
-    private int lastPrimeFound = 2;
-
-    
+    private volatile int lastCurrentNumber = 3;
+    private volatile int lastPrimeFound = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +37,20 @@ public class PrimeComputation extends AppCompatActivity {
 
         mainHandler = new Handler(Looper.getMainLooper());
 
-        currentNumber.setText(String.valueOf(lastCurrentNumber));
-        lastPrimeNumber.setText(String.valueOf(lastPrimeFound));
+        updateDisplayValues();
 
         findPrimes.setOnClickListener(v -> startPrimeSearch());
         terminateSearch.setOnClickListener(v -> stopPrimeSearch());
+    }
+
+    private void updateDisplayValues() {
+        mainHandler.post(() -> {
+            String currentText = String.valueOf(lastCurrentNumber);
+            String primeText = String.valueOf(lastPrimeFound);
+            
+            currentNumber.setText(currentText);
+            lastPrimeNumber.setText(primeText);
+        });
     }
 
     @Override
@@ -61,8 +68,7 @@ public class PrimeComputation extends AppCompatActivity {
         lastPrimeFound = savedInstanceState.getInt("lastPrimeFound", 2);
         boolean wasSearching = savedInstanceState.getBoolean("isSearching", false);
         
-        currentNumber.setText(String.valueOf(lastCurrentNumber));
-        lastPrimeNumber.setText(String.valueOf(lastPrimeFound));
+        updateDisplayValues();
         
         if (wasSearching) {
             startPrimeSearch();
@@ -89,6 +95,8 @@ public class PrimeComputation extends AppCompatActivity {
             }
             worker = null;
         }
+        
+        updateDisplayValues();
     }
 
     private void startPrimeSearch(){
@@ -97,34 +105,26 @@ public class PrimeComputation extends AppCompatActivity {
         }
         isSearching = true;
 
-        worker = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int cur = lastCurrentNumber;
+        worker = new Thread(() -> {
+            int cur = lastCurrentNumber;
 
-                while(isSearching){
-                    final int number2check = cur;
-                    lastCurrentNumber = number2check;
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            currentNumber.setText(String.valueOf(number2check));
-                        }
+            while(isSearching){
+                final int number2check = cur;
+                lastCurrentNumber = number2check;
+                
+                mainHandler.post(() -> {
+                    currentNumber.setText(String.valueOf(number2check));
+                });
+
+                if (isPrime(cur)) {
+                    lastPrimeFound = cur;
+                    int finalCur = cur;
+                    mainHandler.post(() -> {
+                        lastPrimeNumber.setText(String.valueOf(finalCur));
                     });
-
-                    if (isPrime(cur)) {
-                        final int foundPrime = cur;
-                        lastPrimeFound = foundPrime;
-                        mainHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                lastPrimeNumber.setText(String.valueOf(foundPrime));
-                            }
-                        });
-                    }
-
-                    cur += 2;
                 }
+
+                cur += 2;
             }
         });
         worker.start();
@@ -135,7 +135,7 @@ public class PrimeComputation extends AppCompatActivity {
             return false;
         }
 
-        for (int i = 2; i < number; i++) {
+        for (int i = 2; i <= Math.sqrt(number); i++) {
             if (number % i == 0) {
                 return false;
             }
